@@ -1,4 +1,7 @@
 module.exports = {
+  router: {
+    base: '/queuing-system-model/'
+  },
   /*
   ** Headers of the page
   */
