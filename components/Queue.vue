@@ -1,5 +1,8 @@
 <template>
-    <div class="queue-container">
+    <div
+        class="queue-container"
+        :style="{ minWidth: capacity * 20 + 2 + 'px' }"
+    >
         <div class="queue-body">
             <Request
                 v-for="(request, i) in requests"
@@ -22,6 +25,10 @@ export default {
         counter: {
             type: Number,
             default: 0,
+        },
+        capacity: {
+            type: Number,
+            default: 10,
         }
     },
     components: {
@@ -32,14 +39,12 @@ export default {
 
 <style scoped>
     .queue-container {
-        min-width: 504px;
         min-height: 22px;
         border: 1px dashed darkslategrey;
     }
 
     .queue-body {
         display: flex;
-
         flex-direction: row-reverse;
     }
 </style>

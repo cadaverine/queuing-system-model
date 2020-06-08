@@ -9,14 +9,8 @@
 <script>
 export default {
     props: {
-        number: Number
+        number: Number,
     },
-    data: () => ({
-        isServed: Boolean,
-        createdAt: Number,
-        waitingTime: Number,
-        servedAt: Number,
-    }),
 }
 </script>
 
