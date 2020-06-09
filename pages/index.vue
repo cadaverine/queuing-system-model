@@ -2,12 +2,6 @@
   <section class="container">
     <header class="title">Моделирование системы массового обслуживания</header>
 
-    <div class="buttons-group">
-      <button class="button-start" @click="start">start</button>
-      <button class="button-pause" @click="pause">pause</button>
-      <button class="button-add" @click="addRequest">add request</button>
-      <button class="button-serve" @click="serveRequest">serve request</button>
-    </div>
     <div class="inputs-group">
       <div class="input-speed-group">
         <div class="input-speed-title">modeling speed:</div>
@@ -22,7 +16,24 @@
         <div class="input-number-title">requests number:</div>
         <input type="text" class="input-number" v-model="maxNumber">
       </div>
+      <div class="input-input-param-group">
+        <div class="input-input-param-title">input params (Uniform):</div>
+        <input type="text" class="input-input-param" v-model="inputParamFrom">
+        <input type="text" class="input-input-param" v-model="inputParamTo">
+      </div>
+      <div class="input-output-param-group">
+        <div class="input-output-param-title">output param (Poisson):</div>
+        <input type="text" class="input-output-param" v-model="outputParam">
+      </div>
     </div>
+
+    <div class="buttons-group">
+      <button class="button-start" @click="start">start</button>
+      <button class="button-stop" @click="stop">stop</button>
+      <button class="button-add" @click="addRequest">add request</button>
+      <button class="button-serve" @click="serveRequest">serve request</button>
+    </div>
+
     <Queue
       :requests="requests"
       :capacity="capacity"
@@ -30,11 +41,11 @@
     />
     <div class="stats-group">
       <div class="stats-group-lost">
-        <div class="stats-lost-title">was lost:</div>
+        <div class="stats-lost-title">were lost:</div>
         <div class="stats-lost-value" v-text="lost"/>
       </div>
       <div class="stats-group-served">
-        <div class="stats-served-title">was served:</div>
+        <div class="stats-served-title">were served:</div>
         <div class="stats-served-value" v-text="served"/>
       </div>
     </div>
@@ -43,19 +54,21 @@
 
 <script>
 import Queue from '~/components/Queue.vue'
-import { delay, getRandom } from '~/assets/utils'
+import { getRandom, getPoissonRandom } from '~/assets/utils'
 
 export default {
   data: () => ({
     requests: [],
     counter: 1,
-    addTimeout: 0,
-    serveTimeout: 0,
-    speed: 1,
-    capacity: 10,
+    speed: 10,
+    capacity: 30,
     lost: 0,
     served: 0,
-    maxNumber: 30,
+    maxNumber: 60,
+    timeoutsIDs: [],
+    inputParamFrom: 1,
+    inputParamTo: 4,
+    outputParam: 3,
   }),
   components: {
     Queue
@@ -76,14 +89,14 @@ export default {
       }
 
       if (this.counter <= this.maxNumber) {
-        const s = getRandom(1, 2) * 1000 / this.speed
+        const delay = getRandom(this.inputParamFrom, this.inputParamTo) * 1000 / this.speed
 
-        this.addTimeout = setTimeout(() => {
-          this.addRequest()
-          this.addCycle()
-        }, s)
-      } else {
-        // this.pause()
+        this.timeoutsIDs.push(
+          setTimeout(() => {
+            this.addRequest()
+            this.addCycle()
+          }, delay)
+        )
       }
     },
     serveCycle() {
@@ -91,16 +104,19 @@ export default {
         this.speed = 1
       }
 
-      const s = getRandom(2, 5) * 1000 / this.speed
+      const delay = getPoissonRandom(this.outputParam) * 1000 / this.speed
 
-      this.serveTimeout = setTimeout(() => {
-        this.serveRequest()
-        this.serveCycle()
-      }, s)
+      this.timeoutsIDs.push(
+        setTimeout(() => {
+          this.serveRequest()
+          this.serveCycle()
+        }, delay)
+      )
     },
-    pause() {
-      clearTimeout(this.addRequest)
-      clearTimeout(this.serveTimeout)
+    stop() {
+      for (let id of this.timeoutsIDs) {
+        clearTimeout(id)
+      }
     },
     addRequest() {
       if (this.requests.length < this.capacity) {
@@ -153,7 +169,9 @@ export default {
 
 .input-speed-group,
 .input-capacity-group,
-.input-number-group {
+.input-number-group,
+.input-input-param-group,
+.input-output-param-group {
   margin: 10px;
   display: flex;
   justify-content: center;
@@ -166,7 +184,9 @@ export default {
 
 .input-speed,
 .input-capacity,
-.input-number {
+.input-number,
+.input-input-param,
+.input-output-param {
   margin-left: 5px;
   width: 40px;
   text-align: right;

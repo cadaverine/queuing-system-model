@@ -1,7 +1,7 @@
 <template>
     <div
         class="queue-container"
-        :style="{ minWidth: capacity * 20 + 2 + 'px' }"
+        :style="{ minWidth: capacity * 20 + 20 + 'px' }"
     >
         <div class="queue-body">
             <Request
@@ -39,12 +39,16 @@ export default {
 
 <style scoped>
     .queue-container {
-        min-height: 22px;
+        min-height: 26px;
+        background-color: lightskyblue;
+        padding: 2px;
         border: 1px dashed darkslategrey;
+        border-radius: 2px;
     }
 
     .queue-body {
         display: flex;
         flex-direction: row-reverse;
+        align-items: center;
     }
 </style>
