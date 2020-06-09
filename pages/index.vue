@@ -60,14 +60,14 @@ export default {
   data: () => ({
     requests: [],
     counter: 1,
-    speed: 10,
+    speed: 5,
     capacity: 30,
     lost: 0,
     served: 0,
     maxNumber: 60,
     timeoutsIDs: [],
-    inputParamFrom: 1,
-    inputParamTo: 4,
+    inputParamFrom: 4,
+    inputParamTo: 16,
     outputParam: 3,
   }),
   components: {

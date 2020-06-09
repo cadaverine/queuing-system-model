@@ -3,14 +3,13 @@ export function getRandom(min, max) {
 }
 
 export function getPoissonRandom(lambda) {
-    let r = Math.random()
-    let pr = r
-
     let k = 0
-    for (; pr > Math.exp(-lambda); k++) {
-        r = Math.random()
-        pr *= r
-    }
+    let multiplier = 1
+
+    do {
+        k++
+        multiplier *= Math.random()
+    } while(multiplier > Math.exp(-lambda))
 
     return k
 }

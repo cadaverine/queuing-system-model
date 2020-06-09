@@ -39,7 +39,7 @@ export default {
 
 <style scoped>
     .queue-container {
-        min-height: 26px;
+        height: 27px;
         background-color: lightskyblue;
         padding: 2px;
         border: 1px dashed darkslategrey;
