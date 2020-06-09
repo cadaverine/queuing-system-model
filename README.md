@@ -1,23 +1,10 @@
 # queuing-system-model
 
-> Queuing system model
+Моделирование одноканальной СМО.
 
-## Build Setup
+В метро через одну дверь заходит поток пассажиров, распределенных по равномерному распределению с параметром 10 +/- 6с.
+Турникет пропускает пассажира с Пуассоновским распределением (параметр 3 1/с).
+Определить очередь и время прохождения.
 
-``` bash
-# install dependencies
-$ npm install # Or yarn install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
-
+Размещено:
+https://cadaverine.github.io/queuing-system-model/
