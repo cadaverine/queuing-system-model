@@ -1,30 +1,25 @@
 <template>
   <section class="container">
-    <header class="title">Моделирование системы массового обслуживания</header>
+    <header class="title">Queuing system modeling</header>
 
-    <div class="inputs-group">
-      <div class="input-speed-group">
-        <div class="input-speed-title">modeling speed:</div>
-        <input type="text" class="input-speed" v-model="speed">
-        <div class="input-speed-unit">x</div>
+    <div class="inputs-table">
+      <div class="input-title">modeling speed (factor):</div>
+      <input type="text" v-model="speed">
+
+      <div class="input-title">queue capacity:</div>
+      <input type="text" v-model="capacity">
+
+      <div class="input-title">requests number:</div>
+      <input type="text" v-model="maxNumber">
+
+      <div class="input-title">input params (Uniform):</div>
+      <div>
+        <input type="text" v-model="inputParamFrom">
+        <input type="text" v-model="inputParamTo">
       </div>
-      <div class="input-capacity-group">
-        <div class="input-capacity-title">queue capacity:</div>
-        <input type="text" class="input-capacity" v-model="capacity">
-      </div>
-      <div class="input-number-group">
-        <div class="input-number-title">requests number:</div>
-        <input type="text" class="input-number" v-model="maxNumber">
-      </div>
-      <div class="input-input-param-group">
-        <div class="input-input-param-title">input params (Uniform):</div>
-        <input type="text" class="input-input-param" v-model="inputParamFrom">
-        <input type="text" class="input-input-param" v-model="inputParamTo">
-      </div>
-      <div class="input-output-param-group">
-        <div class="input-output-param-title">output param (Poisson):</div>
-        <input type="text" class="input-output-param" v-model="outputParam">
-      </div>
+
+      <div class="input-title">output param (Poisson):</div>
+      <input type="text" v-model="outputParam">
     </div>
 
     <div class="buttons-group">
@@ -39,15 +34,20 @@
       :capacity="capacity"
       :counter="counter"
     />
-    <div class="stats-group">
-      <div class="stats-group-lost">
-        <div class="stats-lost-title">were lost:</div>
-        <div class="stats-lost-value" v-text="lost"/>
-      </div>
-      <div class="stats-group-served">
-        <div class="stats-served-title">were served:</div>
-        <div class="stats-served-value" v-text="served"/>
-      </div>
+
+    <div class="stats-table">
+      <div class="stats-title">were lost:</div>
+      <div class="stats-value stats-value" v-text="stats.lost"/>
+      <div class="stats-title">were served:</div>
+      <div class="stats-value  stats-value" v-text="stats.served"/>
+      <div class="stats-title">average service time (s):</div>
+      <div class="stats-value  stats-value" v-text="stats.serviceTime"/>
+      <div class="stats-title">average waiting time (s):</div>
+      <div class="stats-value  stats-value" v-text="stats.waitingTime"/>
+      <div class="stats-title">lost probability (%):</div>
+      <div class="stats-value  stats-value" v-text="stats.lostProbability"/>
+      <div class="stats-title">service probability (%):</div>
+      <div class="stats-value  stats-value" v-text="stats.serviceProbability"/>
     </div>
   </section>
 </template>
@@ -69,6 +69,14 @@ export default {
     inputParamFrom: 4,
     inputParamTo: 16,
     outputParam: 3,
+    stats: {
+      lost: 0,
+      served: 0,
+      serviceTime: 0,
+      waitingTime: 0,
+      lostProbability: 0,
+      serviceProbability: 0,
+    }
   }),
   components: {
     Queue
@@ -77,8 +85,14 @@ export default {
     start() {
       this.counter = 1
       this.requests = []
-      this.lost = 0
-      this.served = 0
+      this.stats = {
+        lost: 0,
+        served: 0,
+        serviceTime: 0,
+        waitingTime: 0,
+        lostProbability: 0,
+        serviceProbability: 0,
+      }
 
       this.addCycle()
       this.serveCycle()
@@ -124,7 +138,7 @@ export default {
         requestsCopy.push(this.counter)
         this.requests = requestsCopy
       } else {
-        this.lost += 1
+        this.stats.lost += 1
       }
 
       this.counter += 1
@@ -134,7 +148,7 @@ export default {
         let requestsCopy = this.requests.slice()
         requestsCopy.shift()
         this.requests = requestsCopy
-        this.served += 1
+        this.stats.served += 1
       }
     }
   }
@@ -152,13 +166,8 @@ export default {
 }
 
 .title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 20px;
-  color: #35495e;
-  letter-spacing: 1px;
-  margin: 10px;
+  font-size: 25px;
+  margin-bottom: 30px;
 }
 
 .buttons-group {
@@ -167,47 +176,57 @@ export default {
   align-items: center;
 }
 
-.input-speed-group,
-.input-capacity-group,
-.input-number-group,
-.input-input-param-group,
-.input-output-param-group {
-  margin: 10px;
-  display: flex;
-  justify-content: center;
-}
-
-.inputs-group {
-  background-color: darkseagreen;
-  margin: 20px;
-}
-
-.input-speed,
-.input-capacity,
-.input-number,
-.input-input-param,
-.input-output-param {
+input {
+  margin: 4px;
+  border-radius: 4px;
   margin-left: 5px;
   width: 40px;
   text-align: right;
 }
 
+button {
+  font-size: 13px;
+}
+
+.input-title {
+  width: 185px;
+  text-align: left;
+  margin: 4px;
+  height: 23px;
+}
+
+.inputs-table {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  background-color: #90E0EF;
+  /* color: white; */
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.stats-table {
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  background-color: #90E0EF;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.stats-title,
+.stats-value {
+  margin: 4px;
+  height: 23px;
+}
+
+.stats-title {
+  text-align: left;
+}
+
 .stats-group {
   display: flex;
-}
-
-.stats-group-lost,
-.stats-group-served {
-  display: flex;
+  flex-direction: column;
   margin: 5px;
-}
-
-.stats-group-lost {
-  color: red;
-}
-
-.stats-group-served {
-  color: green;
 }
 
 .stats-lost-value,
@@ -227,5 +246,29 @@ export default {
 .links {
   padding-top: 15px;
 }
+
+
+button {
+	background-color:#599bb3;
+	border-radius:8px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:8px 15px;
+  margin: 5px;
+	text-decoration:none;
+}
+button:hover {
+	/* background:linear-gradient(to bottom, #408c99 5%, #599bb3 100%); */
+	background-color:#408c99;
+}
+button:active {
+	position:relative;
+	top:1px;
+}
+
 </style>
 

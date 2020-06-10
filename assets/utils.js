@@ -4,12 +4,12 @@ export function getRandom(min, max) {
 
 export function getPoissonRandom(lambda) {
     let k = 0
-    let multiplier = 1
+    let multiplier = Math.random()
 
-    do {
-        k++
+    while (multiplier > Math.exp(-lambda)) {
         multiplier *= Math.random()
-    } while(multiplier > Math.exp(-lambda))
+        k++
+    }
 
     return k
 }

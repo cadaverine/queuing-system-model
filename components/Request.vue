@@ -21,8 +21,9 @@ export default {
     .request-body {
         min-width: 20px;
         font-weight: bold;
-        border: 1px solid black;
-        border-radius: 2px;
-        background-color: cadetblue;
+        border: 1px solid #48CAE4;
+        border-radius: 3px;
+        background-color: #023E8A;
+        color: white;
     }
 </style>

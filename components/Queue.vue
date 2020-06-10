@@ -39,11 +39,14 @@ export default {
 
 <style scoped>
     .queue-container {
-        height: 27px;
-        background-color: lightskyblue;
-        padding: 2px;
-        border: 1px dashed darkslategrey;
-        border-radius: 2px;
+        height: 26px;
+        background-color: #48CAE4;
+        padding: 0 2px;
+        border-radius: 4px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .queue-body {
