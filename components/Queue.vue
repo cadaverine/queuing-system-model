@@ -7,7 +7,7 @@
             <Request
                 v-for="(request, i) in requests"
                 :key="i"
-                :number="request"
+                :number="request.index"
             />
         </div>
     </div>

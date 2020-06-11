@@ -41,13 +41,13 @@
       <div class="stats-title">were served:</div>
       <div class="stats-value  stats-value" v-text="stats.served"/>
       <div class="stats-title">average service time (s):</div>
-      <div class="stats-value  stats-value" v-text="stats.serviceTime"/>
+      <div class="stats-value  stats-value" v-text="stats.serviceTime.toFixed(1)"/>
       <div class="stats-title">average waiting time (s):</div>
-      <div class="stats-value  stats-value" v-text="stats.waitingTime"/>
+      <div class="stats-value  stats-value" v-text="stats.waitingTime.toFixed(1)"/>
       <div class="stats-title">lost probability (%):</div>
-      <div class="stats-value  stats-value" v-text="stats.lostProbability"/>
+      <div class="stats-value  stats-value" v-text="stats.lostProbability.toFixed(1)"/>
       <div class="stats-title">service probability (%):</div>
-      <div class="stats-value  stats-value" v-text="stats.serviceProbability"/>
+      <div class="stats-value  stats-value" v-text="stats.serviceProbability.toFixed(1)"/>
     </div>
   </section>
 </template>
@@ -59,7 +59,7 @@ import { getRandom, getPoissonRandom } from '~/assets/utils'
 export default {
   data: () => ({
     requests: [],
-    counter: 1,
+    counter: 0,
     speed: 5,
     capacity: 30,
     lost: 0,
@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     start() {
-      this.counter = 1
+      this.counter = 0
       this.requests = []
       this.stats = {
         lost: 0,
@@ -92,6 +92,8 @@ export default {
         waitingTime: 0,
         lostProbability: 0,
         serviceProbability: 0,
+        serviceTimes: [],
+        waitingTimes: [],
       }
 
       this.addCycle()
@@ -103,7 +105,8 @@ export default {
       }
 
       if (this.counter <= this.maxNumber) {
-        const delay = getRandom(this.inputParamFrom, this.inputParamTo) * 1000 / this.speed
+        const random = getRandom(this.inputParamFrom, this.inputParamTo)
+        const delay = random * 1000 / this.speed
 
         this.timeoutsIDs.push(
           setTimeout(() => {
@@ -118,11 +121,12 @@ export default {
         this.speed = 1
       }
 
-      const delay = getPoissonRandom(this.outputParam) * 1000 / this.speed
+      const random = getPoissonRandom(this.outputParam)
+      const delay = random * 1000 / this.speed
 
       this.timeoutsIDs.push(
         setTimeout(() => {
-          this.serveRequest()
+          this.serveRequest(random)
           this.serveCycle()
         }, delay)
       )
@@ -135,20 +139,34 @@ export default {
     addRequest() {
       if (this.requests.length < this.capacity) {
         let requestsCopy = this.requests.slice()
-        requestsCopy.push(this.counter)
+        // requestsCopy.push(this.counter)
+        requestsCopy.push({
+          index: this.counter + 1,
+          createdAt: Date.now()
+        })
         this.requests = requestsCopy
       } else {
         this.stats.lost += 1
+        this.stats.lostProbability = this.stats.lost / (this.counter / 100)
       }
 
       this.counter += 1
     },
-    serveRequest() {
+    serveRequest(random) {
       if (this.requests.length > 0) {
         let requestsCopy = this.requests.slice()
-        requestsCopy.shift()
+        let request = requestsCopy.shift()
         this.requests = requestsCopy
+
+        // update stats
         this.stats.served += 1
+        this.stats.serviceTimes.push(random)
+        this.stats.serviceTime = this.stats.serviceTimes.reduce((a, b) => a + b) / this.stats.served
+
+        this.stats.waitingTimes.push((Date.now() - request.createdAt) * this.speed / 1000)
+        this.stats.waitingTime = this.stats.waitingTimes.reduce((a, b) => a + b) / this.stats.served
+
+        this.stats.serviceProbability = this.stats.served / (this.counter / 100)
       }
     }
   }
