@@ -104,7 +104,7 @@ export default {
         this.speed = 1
       }
 
-      if (this.counter <= this.maxNumber) {
+      if (this.counter < this.maxNumber) {
         const random = getRandom(this.inputParamFrom, this.inputParamTo)
         const delay = random * 1000 / this.speed
 
