@@ -25,8 +25,8 @@
     <div class="buttons-group">
       <button class="button-start" @click="start">start</button>
       <button class="button-stop" @click="stop">stop</button>
-      <button class="button-add" @click="addRequest">add request</button>
-      <button class="button-serve" @click="serveRequest">serve request</button>
+      <!-- <button class="button-add" @click="addRequest">add request</button>
+      <button class="button-serve" @click="serveRequest">serve request</button> -->
     </div>
 
     <Queue
